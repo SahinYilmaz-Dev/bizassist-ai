@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Business Profile | BizAssist AI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0 20px 0;
+        }
+        button {
+            padding: 10px 20px;
+            background: black;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        h2 {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Business Profile</h2>
+    <p>Fill this out so BizAssist AI can act like your employee.</p>
+
+    <form id="profileForm">
+        <label>Business Name</label>
+        <input type="text" id="business_name" required>
+
+        <label>Services</label>
+        <textarea id="services" rows="3" required></textarea>
+
+        <label>Pricing</label>
+        <textarea id="pricing" rows="3" required></textarea>
+
+        <label>Brand Voice</label>
+        <textarea id="brand_voice" rows="3" required></textarea>
+
+        <label>FAQs</label>
+        <textarea id="faqs" rows="3" required></textarea>
+
+        <label>Goals</label>
+        <textarea id="goals" rows="3" required></textarea>
+
+        <button type="submit">Save Profile</button>
+    </form>
+
+    <p id="status"></p>
+
+    <script>
+        document.getElementById("profileForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const data = {
+                business_name: document.getElementById("business_name").value,
+                services: document.getElementById("services").value,
+                pricing: document.getElementById("pricing").value,
+                brand_voice: document.getElementById("brand_voice").value,
+                faqs: document.getElementById("faqs").value,
+                goals: document.getElementById("goals").value
+            };
+
+            const response = await fetch("/business-profile", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data),
+            });
+
+            const result = await response.json();
+            document.getElementById("status").textContent = result.message;
+        });
+    </script>
+
+</body>
+</html>
