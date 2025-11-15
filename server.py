@@ -29,6 +29,13 @@ except Exception:
 
 app = FastAPI(title="AI Assistant")
 
+from fastapi.responses import FileResponse
+
+@app.get("/")
+def landing():
+    return FileResponse(os.path.join("static", "landing.html"))
+
+
 # Serve static files (frontend)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
