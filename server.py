@@ -235,7 +235,28 @@ async def index():
 @app.post("/api/chat")
 async def chat(req: ChatRequest):
     # Build message list with system prompt
-    msgs = [{"role": "system", "content": SYSTEM_PROMPT}]
+    msgs = [{"role": "system", "content": SYSTEM_PROMPT}]\
+
+    # Load business profile and inject it (if it exists)
+    if os.path.exists("business_profile.json"):
+        with open("business_profile.json", "r") as f:
+            profile = json.load(f)
+
+        profile_text = (
+            f"Business Name: {profile.get('business_name', '')}\n"
+            f"Services: {profile.get('services', '')}\n"
+            f"Pricing: {profile.get('pricing', '')}\n"
+            f"Brand Voice: {profile.get('brand_voice', '')}\n"
+            f"FAQs: {profile.get('faqs', '')}\n"
+            f"Goals: {profile.get('goals', '')}\n"
+        )
+
+        msgs.append({
+            "role": "system",
+            "content": "Business Profile:\n" + profile_text
+        })
+
+    # Add user messages
     for m in req.messages:
         entry = {"role": m.role, "content": m.content}
         if m.role == "tool":
