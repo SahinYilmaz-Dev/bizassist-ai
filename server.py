@@ -251,6 +251,39 @@ async def chat(req: ChatRequest):
 async def health():
     return JSONResponse({"ok": True})
 
+# -------------------------------
+# Business Profile Setup
+# -------------------------------
+
+from pydantic import BaseModel
+import json
+import os
+
+PROFILE_PATH = "business_profile.json"
+
+class BusinessProfile(BaseModel):
+    business_name: str
+    services: str
+    pricing: str
+    brand_voice: str
+    faqs: str
+    goals: str
+
+@app.post("/business-profile")
+def save_business_profile(profile: BusinessProfile):
+    with open(PROFILE_PATH, "w") as f:
+        json.dump(profile.dict(), f, indent=4)
+    return {"message": "Business profile saved successfully!"}
+
+@app.get("/business-profile")
+def get_business_profile():
+    if not os.path.exists(PROFILE_PATH):
+        return {"profile": None}
+    with open(PROFILE_PATH, "r") as f:
+        data = json.load(f)
+    return {"profile": data}
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("server:app", host="0.0.0.0", port=8000, reload=True)
