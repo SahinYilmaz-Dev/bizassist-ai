@@ -31,6 +31,13 @@
 
       <div id="chat" class="chat"></div>
 
+      <div id="task-buttons" style="display:flex; gap:8px; margin-top:16px; flex-wrap:wrap;">
+  <button onclick="sendTask('Write an engaging Instagram post for my business.')">Instagram Post</button>
+  <button onclick="sendTask('Write a friendly and professional email reply to a customer.')">Email Reply</button>
+  <button onclick="sendTask('Write persuasive ad copy for my business.')">Ad Copy</button>
+</div>
+
+
       <div class="row">
         <textarea id="input" placeholder="Type your message..."></textarea>
         <button id="send">Send</button>
@@ -96,6 +103,12 @@
     inputEl.addEventListener('keydown', e => {
       if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
     });
+
+    function sendTask(text) {
+  inputEl.value = text;
+  send();
+}
+
 
     addMsg('assistant', "Hello! I'm your AI assistant. How can I help?");
   </script>
