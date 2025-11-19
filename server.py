@@ -237,8 +237,33 @@ async def chat(req: ChatRequest):
     # Build message list with system prompt
     msgs = [{"role": "system", "content": SYSTEM_PROMPT}]\
 
-    # Load business profile and inject it (if it exists)
-    if os.path.exists("business_profile.json"):
+        # DEMO MODE: If no profile exists, load a default demo profile
+    if not os.path.exists("business_profile.json"):
+        demo_profile = {
+            "business_name": "BrightSide Cleaning Services",
+            "services": "Residential cleaning, deep cleaning, move-in/move-out cleaning, office cleaning, Airbnb turnover.",
+            "pricing": "Standard cleaning: $99–$149\nDeep cleaning: $149–$249\nMove-in/out: $199–$299\nAirbnb: $75–$120",
+            "brand_voice": "Friendly, helpful, trustworthy, and efficient.",
+            "faqs": "Do you bring supplies? Yes.\nAre you insured? Yes.\nSame-day service? Sometimes.",
+            "goals": "Get more recurring weekly clients, improve communication, and streamline content."
+        }
+
+        profile_text = (
+            f"Business Name: {demo_profile['business_name']}\n"
+            f"Services: {demo_profile['services']}\n"
+            f"Pricing: {demo_profile['pricing']}\n"
+            f"Brand Voice: {demo_profile['brand_voice']}\n"
+            f"FAQs: {demo_profile['faqs']}\n"
+            f"Goals: {demo_profile['goals']}\n"
+        )
+
+        msgs.append({
+            "role": "system",
+            "content": "Business Profile:\n" + profile_text
+        })
+
+    else:
+        # Load real business profile
         with open("business_profile.json", "r") as f:
             profile = json.load(f)
 
@@ -255,6 +280,7 @@ async def chat(req: ChatRequest):
             "role": "system",
             "content": "Business Profile:\n" + profile_text
         })
+
 
     # Add user messages
     for m in req.messages:
