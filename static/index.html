@@ -6,134 +6,154 @@
   <title>BizAssist AI</title>
 
   <style>
-    /* ---- GLOBAL STYLES ---- */
-    * { box-sizing: border-box; }
+  :root {
+    --bg: #050714;
+    --text: #e7ebf0;
+    --muted: #9aa1ac;
+    --accent: #4f7dff; /* deeper blue */
+  }
 
-    body {
-      margin: 0;
-      font-family: 'Inter', ui-sans-serif, system-ui;
-      background: radial-gradient(circle at top left, #1a1c2f, #0a0b15 70%);
-      color: #e9ecf5;
-      display: flex;
-      justify-content: center;
-      padding: 60px 20px;
-    }
+  * { box-sizing: border-box; }
 
-    /* ---- CARD ---- */
-    .card {
-      width: 100%;
-      max-width: 760px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.18);
-      border-radius: 28px;
-      padding: 36px;
-      backdrop-filter: blur(22px);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.45);
-      background-image: 
-        radial-gradient(circle at top right, rgba(120,105,255,0.25), transparent 60%),
-        radial-gradient(circle at bottom left, rgba(0,204,255,0.2), transparent 70%);
-    }
+  body {
+    margin: 0;
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    color: var(--text);
+    background:
+      radial-gradient(circle at top left, rgba(120, 90, 255, 0.35), transparent 55%),
+      radial-gradient(circle at bottom right, rgba(190, 70, 255, 0.35), transparent 55%),
+      #050714;
+  }
 
-    .title {
-      font-size: 30px;
-      font-weight: 700;
-    }
+  .wrap {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 32px 16px;
+  }
 
-    .muted {
-      margin-top: 4px;
-      color: #b4b8c7;
-    }
+  .card {
+    background: rgba(14, 18, 40, 0.82);
+    border: 1px solid rgba(160, 190, 255, 0.45);
+    border-radius: 26px;
+    padding: 24px;
+    box-shadow:
+      0 22px 60px rgba(0, 0, 0, 0.7),
+      0 0 40px rgba(120, 90, 255, 0.35);
+    backdrop-filter: blur(26px);
+  }
 
-    /* ---- CHAT BUBBLES ---- */
-    .chat {
-      margin-top: 22px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
+  .title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
 
-    .msg {
-      padding: 14px 18px;
-      border-radius: 16px;
-      max-width: 88%;
-      white-space: pre-wrap;
-      line-height: 1.45;
-      backdrop-filter: blur(14px);
-      border: 1px solid rgba(255,255,255,0.1);
-    }
+  .muted {
+    color: var(--muted);
+    font-size: 14px;
+  }
 
-    .user {
-      align-self: flex-end;
-      background: rgba(120,150,255,0.22);
-      border: 1px solid rgba(120,150,255,0.32);
-    }
+  .chat {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
 
-    .assistant {
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.18);
-    }
+  .msg {
+    padding: 14px 16px;
+    border-radius: 18px;
+    max-width: 85%;
+    white-space: pre-wrap;
+    line-height: 1.45;
+    backdrop-filter: blur(18px);
+  }
 
-    /* ---- QUICK ACTION BUTTONS ---- */
-    #task-buttons {
-      margin-top: 20px;
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
+  .user {
+    align-self: flex-end;
+    background: linear-gradient(135deg, rgba(79, 125, 255, 0.3), rgba(122, 92, 255, 0.35));
+    border: 1px solid rgba(139, 176, 255, 0.7);
+  }
 
-    .task-btn {
-      padding: 12px 22px;
-      border-radius: 14px;
-      border: none;
-      font-weight: 600;
-      cursor: pointer;
-      background: linear-gradient(135deg, #6d8dff, #5a78ff);
-      color: white;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-      transition: 0.2s ease;
-    }
+  .assistant {
+    background: rgba(14, 22, 55, 0.85);
+    border: 1px solid rgba(185, 200, 255, 0.35);
+  }
 
-    .task-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 18px rgba(0,0,0,0.35);
-    }
+  #task-buttons {
+    margin-top: 18px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
 
-    /* ---- INPUT BAR ---- */
-    .row {
-      display: flex;
-      margin-top: 24px;
-      gap: 12px;
-    }
+  .task-btn {
+    background: linear-gradient(135deg, #4f7dff, #7a5cff);
+    color: #f5f7ff;
+    font-weight: 600;
+    border: none;
+    border-radius: 999px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+    box-shadow: 0 8px 22px rgba(79, 125, 255, 0.6);
+    backdrop-filter: blur(16px);
+    font-size: 14px;
+  }
 
-    textarea {
-      flex: 1;
-      padding: 14px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.25);
-      background: rgba(255,255,255,0.08);
-      color: white;
-      resize: none;
-      height: 54px;
-      font-size: 15px;
-      backdrop-filter: blur(14px);
-    }
+  .task-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(79, 125, 255, 0.8);
+  }
 
-    #send {
-      padding: 0 26px;
-      font-size: 16px;
-      font-weight: 700;
-      border-radius: 14px;
-      border: none;
-      cursor: pointer;
-      background: linear-gradient(135deg, #7396ff, #5f7eff);
-      color: white;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-      transition: 0.2s ease;
-    }
+  .task-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 6px 16px rgba(79, 125, 255, 0.6);
+  }
 
-    #send:hover {
-      transform: translateY(-2px);
-    }
+  .row {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  textarea {
+    flex: 1;
+    background: rgba(10, 13, 32, 0.85);
+    border: 1px solid rgba(155, 180, 255, 0.5);
+    color: var(--text);
+    border-radius: 18px;
+    padding: 12px 14px;
+    resize: none;
+    backdrop-filter: blur(18px);
+    outline: none;
+  }
+
+  textarea::placeholder {
+    color: rgba(198, 206, 232, 0.7);
+  }
+
+  #send {
+    background: linear-gradient(135deg, #4f7dff, #7a5cff);
+    color: #050714;
+    font-weight: 700;
+    border: none;
+    border-radius: 16px;
+    padding: 0 22px;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: 0 10px 26px rgba(79, 125, 255, 0.8);
+  }
+
+  #send:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 34px rgba(79, 125, 255, 0.95);
+  }
+
+  #send:active {
+    transform: translateY(0);
+    box-shadow: 0 8px 20px rgba(79, 125, 255, 0.8);
+  }
   </style>
 </head>
 
