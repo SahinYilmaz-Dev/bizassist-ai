@@ -30,9 +30,23 @@ except Exception:
 from supabase import create_client
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY")
+SUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
 
-supabase = create_client(SUPABASE_URL, SUPABASE_ANON_KEY)   
+supabase = create_client(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
+
+
+def save_message(user_id, message, role="assistant"):
+    supabase.table("messages").insert({
+        "user_id": user_id,
+        "role": role,
+        "content": message
+    }).execute()
+
+    
+class ChatRequest(BaseModel):
+    user_id: str
+    message: str
+
 
 app = FastAPI(title="AI Assistant")
 
@@ -148,12 +162,13 @@ class ChatMessage(BaseModel):
     tool_call: Optional[Dict[str, Any]] = None
 
 class ChatRequest(BaseModel):
-    messages: list[ChatMessage]
+    user_id: str
+    message: str
 
 # --------------------------
 # OpenAI Chat wrapper (streaming)
 # --------------------------
-async def openai_stream(messages: list[Dict[str, Any]]) -> AsyncGenerator[str, None]:
+async def openai_stream(messages: list[Dict[str, Any]], user_id: str) -> AsyncGenerator[str, None]:
     if not USE_OPENAI:
         yield "Server not configured with OPENAI_API_KEY.\n"
         return
@@ -196,6 +211,9 @@ async def openai_stream(messages: list[Dict[str, Any]]) -> AsyncGenerator[str, N
                 chunk = delta.content
                 assistant_text_chunks.append(chunk)
                 yield chunk
+
+    final_text = "".join(assistant_text_chunks)
+    save_message(user_id, final_text, role="assistant")
 
     # If there were tool calls, execute and send follow-up
     if tool_calls_buffer:
@@ -244,6 +262,7 @@ async def index():
 @app.post("/api/chat")
 async def chat(req: ChatRequest):
     # Build message list with system prompt
+    save_message(req.user_id, req.message, role="user")
     msgs = [{"role": "system", "content": SYSTEM_PROMPT}]\
 
         # DEMO MODE: If no profile exists, load a default demo profile
@@ -290,16 +309,17 @@ async def chat(req: ChatRequest):
             "content": "Business Profile:\n" + profile_text
         })
 
+        msgs.append({
+    "role": "user",
+    "content": req.message
+})
 
-    # Add user messages
-    for m in req.messages:
-        entry = {"role": m.role, "content": m.content}
-        if m.role == "tool":
-            entry["name"] = m.name or "tool"
-        msgs.append(entry)
+
+
+
 
     # Stream the OpenAI response back to the browser
-    return StreamingResponse(openai_stream(msgs), media_type="text/plain")
+    return StreamingResponse(openai_stream(msgs, req.user_id), media_type="text/plain")
 
 
 

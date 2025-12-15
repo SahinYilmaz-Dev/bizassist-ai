@@ -200,11 +200,14 @@
 
       sendBtn.disabled = true;
 
-      const res = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: state.messages }),
-      });
+const res = await fetch("/api/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+        user_id: "demo-user",
+        message: content
+    }),
+});
 
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
